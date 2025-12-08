@@ -5,7 +5,13 @@ class Target extends Vehicle {
     this.vel.mult(6);
 
     // propriété de la target
-    this.rayonDetection = 50;
+    this.rayonDetection = 100;
+
+    // On change la vitesse et la direction toutes les 1000ms
+    setInterval(() => {
+      this.vel = p5.Vector.random2D();
+      this.vel.mult(6);
+    }, 1000);
   }
 
   show() {

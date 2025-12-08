@@ -12,6 +12,7 @@ class Vehicle {
     this.maxForce = 0.1;
     // rayon du véhicule
     this.r = 16;
+    
   }
 
   tableVehicle(n) {
@@ -33,6 +34,7 @@ class Vehicle {
   // la cible passée en paramètre (un vecteur p5.Vector, par exemple la position de 
   // la souris)
   seek(target) {
+ 
     // on calcule la direction vers la cible : la vitesse DESIREE
     // C'est l'ETAPE 1 (action : se diriger vers une cible)
     let desiredSpeed = p5.Vector.sub(target, this.pos);
@@ -90,7 +92,7 @@ class Vehicle {
     // épaisseur du trait, position et rotation du repère de référence)
     push();
     // formes fil de fer en blanc
-    stroke(255);
+    stroke("white");
     // épaisseur du trait = 2
     strokeWeight(2);
 
@@ -109,6 +111,10 @@ class Vehicle {
     // avec le 0, 0 en haut à gauche
     triangle(-this.r, -this.r / 2, -this.r, this.r / 2, this.r, 0);
     
+    // on dessine le cercle de perception
+    noFill();
+    stroke("rgba(255, 255, 255)");
+    circle(0, 0, this.perceptionRadius*2);
     // restauration du contexte graphique, le 0, 0 redevient le coin en haut à gauche
     // de l'écran, les couleurs et épaisseurs de traits redeviennent celles d'avant
     pop();

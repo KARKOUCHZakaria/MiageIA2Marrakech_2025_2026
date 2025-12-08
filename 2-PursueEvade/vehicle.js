@@ -42,33 +42,33 @@ class Vehicle {
      cette methode renvoie la force à appliquer au véhicule
   */
   pursue(target) {
-   
+
+    // On dessine le vecteur vitesse de la target
+    this.drawVector(target.pos, target.vel.copy().mult(10));
+
     // TODO
     // 1 - calcul de la position future de la cible
     // on fait une copie de la vitesse de la target
-    let targetAhead = target.vel.copy();
+
+
     // et on le multiplie par 10 (10 frames)
     // 2 - prediction dans 10 frames = 10 fois la longueur du vecteur
     // (on multiplie le vecteur vitesse par 10)
     // TODO
-    targetAhead.mult(10);
+
     // 3 - on positionne  la target au bout de ce vecteur
     // (on ajoute ce vecteur à la position de la target)
     // TODO
-
     targetAhead.add(target.pos);
+
     // 4 -dessin du vecteur prediction
-    fill("green");
-    drawArrow(target.pos, p5.Vector.sub(targetAhead, target.pos), 'green');
-    circle(targetAhead.x, targetAhead.y, 16);
+
     // 5 - dessin d'un cercle vert de rayon 16 pour voir ce point
     // on dessine le point devant le véhicule
     
 
     // 6 - appel à seek avec ce point comme cible 
-    // SUPPRIMER LA LIGNE SUIVANTE ET FAIRE LES ETAPES 1 A 6
-    let prediction = new p5.Vector(0, 0); // TODO : remplacer ce 0, 0 par la position future calculée
-    let force = this.seek(prediction);
+    let force = this.seek(targetAhead);
 
     // n'oubliez pas, on renvoie la force à appliquer au véhicule !
     return force;
