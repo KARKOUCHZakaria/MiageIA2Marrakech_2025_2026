@@ -8,7 +8,7 @@ class Vehicle {
     this.maxSpeed = 10;
     this.maxForce = 0.6;
     this.r = 16;
-    this.rayonZoneDeFreinage = 100;
+    this.rayonZoneDeFreinage = 400;
   }
 
   evade(vehicle) {
@@ -27,20 +27,19 @@ class Vehicle {
     return this.seek(target);
   }
 
-  arrive(target, d = 0) {
+  arrive(target) {
     // 2nd argument true enables the arrival behavior
     // 3rd argument d is the distance behind the target
     // for "snake" behavior
-    return this.seek(target, true, d);
+    return this.seek(target, true);
   }
 
   flee(target) {
     // recopier code de flee de l'exemple précédent
   }
 
-  seek(target, arrival = false, d) {
-    let force = p5.Vector.sub(target, this.pos);
-    let desiredSpeed = this.maxSpeed;
+  seek(target, arrival = false) {
+    let valueDesiredSpeed = this.maxSpeed;
 
     if (arrival) {
       // On définit un rayon de 100 pixels autour de la cible
@@ -70,12 +69,18 @@ class Vehicle {
       // si d = rayon alors desiredSpeed = maxSpeed
       // si d = 0 alors desiredSpeed = 0
       if (distance < this.rayonZoneDeFreinage) {
-        desiredSpeed = map(distance, d, this.rayonZoneDeFreinage, 0, this.maxSpeed);
+        valueDesiredSpeed = map(distance, 0, this.rayonZoneDeFreinage, 0, this.maxSpeed);
       }
     }
 
-    force.setMag(desiredSpeed);
-    force.sub(this.vel);
+    // Ici on calcule la force à appliquer au véhicule
+    // pour aller vers la cible (avec ou sans arrivée)
+    // un vecteur qui va vers la cible, c'est pour le moment la vitesse désirée
+    let desiredSpeed = p5.Vector.sub(target, this.pos);
+    desiredSpeed.setMag(valueDesiredSpeed);
+   
+    // Force = desiredSpeed - currentSpeed
+    let force = p5.Vector.sub(desiredSpeed, this.vel);
     force.limit(this.maxForce);
     return force;
   }

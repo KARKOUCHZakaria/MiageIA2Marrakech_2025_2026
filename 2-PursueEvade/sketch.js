@@ -19,7 +19,7 @@ function setup() {
   // Si on veut plus tard plusieurs cibles
   let nbTargets = 10;
   for (let i = 0; i < nbTargets; i++) {
-    let t = new Target(random(width), random(height));
+    let t = new BouncingBall(random(width), random(height));
     t.maxSpeed = 10;
     t.maxForce = 0.5;
     targets.push(t);
@@ -54,6 +54,7 @@ function draw() {
     // poursuiveur
     let d = p5.Vector.dist(pursuer.pos, target.pos);
     if (d < target.rayonDetection) {
+      // La cible fuit en accélérant
       target.maxSpeed = 20;
       target.maxForce = 1;
       let force = target.evade(pursuer);
@@ -67,6 +68,7 @@ function draw() {
           targets.splice(index, 1);
       }
     } else {
+      // La cible se déplace normalement
       target.maxSpeed = 10;
       target.maxForce = 0.5;
     }
