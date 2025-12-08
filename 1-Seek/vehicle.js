@@ -14,6 +14,15 @@ class Vehicle {
     this.r = 16;
   }
 
+  tableVehicle(n) {
+    let nbVehicles = n;
+    this.vehicles = [];
+    for (let i = 0; i < nbVehicles; i++) {
+      this.vehicles.push(new Vehicle(random(width), random(height)));
+    }
+    return this.vehicles;
+  }
+
   applyBehaviors(target) {
     let force = this.seek(target);
     //let force = this.flee(target);
@@ -139,4 +148,5 @@ class Vehicle {
       this.pos.y = height + this.r;
     }
   }
+
 }

@@ -46,19 +46,21 @@ class Vehicle {
     // TODO
     // 1 - calcul de la position future de la cible
     // on fait une copie de la vitesse de la target
-
-
+    let targetAhead = target.vel.copy();
     // et on le multiplie par 10 (10 frames)
     // 2 - prediction dans 10 frames = 10 fois la longueur du vecteur
     // (on multiplie le vecteur vitesse par 10)
     // TODO
-
+    targetAhead.mult(10);
     // 3 - on positionne  la target au bout de ce vecteur
     // (on ajoute ce vecteur à la position de la target)
     // TODO
 
+    targetAhead.add(target.pos);
     // 4 -dessin du vecteur prediction
-
+    fill("green");
+    drawArrow(target.pos, p5.Vector.sub(targetAhead, target.pos), 'green');
+    circle(targetAhead.x, targetAhead.y, 16);
     // 5 - dessin d'un cercle vert de rayon 16 pour voir ce point
     // on dessine le point devant le véhicule
     

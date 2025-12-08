@@ -3,7 +3,7 @@ let target, vehicle;
 // la fonction setup est appelée une fois au démarrage du programme par p5.js
 function setup() {
   // on crée un canvas de 800px par 800px
-  createCanvas(800, 800);
+  createCanvas(windowWidth, windowHeight);
 
   // On crée un véhicule à la position (100, 100)
   vehicle = new Vehicle(100, 100);
@@ -11,10 +11,26 @@ function setup() {
   // TODO: créer un tableau de véhicules en global
   // ajouter nb vehicules au tableau dans une boucle
   // avec une position random dans le canvas
-
+  tableVehicles = vehicle.tableVehicle(8);
   // La cible est un vecteur avec une position aléatoire dans le canvas
   // dirigée par la souris ensuite dans draw()
   target = createVector(random(width), random(height));
+   vitesseMaxSlider = createSlider(1,20,10,1);
+   vitesseMaxSlider.position(920,10);
+   vitesseMaxSlider.size(80);
+   let labelVitesseMax = createDiv('Vitesse Max');
+   labelVitesseMax.position(810, 10);
+   labelVitesseMax.style('color', 'White');
+   labelVitesseMax.style('font-size', '20px');
+
+
+    forceMaxSlider = createSlider(0.05,2,0.1,0.01);
+    forceMaxSlider.position(920,40);
+    forceMaxSlider.size(80);
+    let labelforceMax = createDiv('Force Max');
+    labelforceMax.position(810, 40);
+    labelforceMax.style('color', 'White');
+    labelforceMax.style('font-size', '20px');
 }
 
   // la fonction draw est appelée en boucle par p5.js, 60 fois par seconde par défaut
@@ -40,16 +56,26 @@ function setup() {
     circle(target.x, target.y, 32);
 
     // je déplace et dessine le véhicule
-    vehicle.applyBehaviors(target);
-    vehicle.update();
+    //vehicle.applyBehaviors(target);
+    //vehicle.update();
 
     // TODO :au lieu d'afficher un seul véhicule
     // faire une boucle pour afficher plusieurs véhicules
-
+   tableVehicles.forEach(vehicle => {
+      vehicle.maxSpeed = vitesseMaxSlider.value();
+      vehicle.maxForce = forceMaxSlider.value();
+      vehicle.applyBehaviors(target);
+      vehicle.update();
+      vehicle.show();
+      vehicle.edges();
+   })
     // Si le vehicule sort de l'écran
     // TODO : appeler la méthode edges() du véhicule
-
+  
     // On dessine le véhicule
-    vehicle.show();
+  
+
+   
+    
   };
 

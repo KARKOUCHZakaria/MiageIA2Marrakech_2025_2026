@@ -28,7 +28,7 @@ function draw() {
   // pursuer = le véhicule poursuiveur, il vise un point devant la cible
   target = targets[0];
 
-  let force = pursuer.pursue(target);
+  let force = pursuer.pursuePerfect(target);
   pursuer.applyForce(force);
 
 
