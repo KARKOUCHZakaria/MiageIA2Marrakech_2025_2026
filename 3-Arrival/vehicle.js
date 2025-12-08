@@ -27,7 +27,7 @@ class Vehicle {
     return this.seek(target);
   }
 
-  arrive(target, d = 0) {
+  arrive(target, d=0) {
     // 2nd argument true enables the arrival behavior
     // 3rd argument d is the distance behind the target
     // for "snake" behavior
@@ -38,9 +38,8 @@ class Vehicle {
     // recopier code de flee de l'exemple précédent
   }
 
-  seek(target, arrival = false, d) {
-    let force = p5.Vector.sub(target, this.pos);
-    let desiredSpeed = this.maxSpeed;
+  seek(target, arrival = false, d=0) {
+    let valueDesiredSpeed = this.maxSpeed;
 
     if (arrival) {
       // On définit un rayon de 100 pixels autour de la cible
@@ -70,12 +69,18 @@ class Vehicle {
       // si d = rayon alors desiredSpeed = maxSpeed
       // si d = 0 alors desiredSpeed = 0
       if (distance < this.rayonZoneDeFreinage) {
-        desiredSpeed = map(distance, d, this.rayonZoneDeFreinage, 0, this.maxSpeed);
+        valueDesiredSpeed = map(distance, d, this.rayonZoneDeFreinage, 0, this.maxSpeed);
       }
     }
 
-    force.setMag(desiredSpeed);
-    force.sub(this.vel);
+    // Ici on calcule la force à appliquer au véhicule
+    // pour aller vers la cible (avec ou sans arrivée)
+    // un vecteur qui va vers la cible, c'est pour le moment la vitesse désirée
+    let desiredSpeed = p5.Vector.sub(target, this.pos);
+    desiredSpeed.setMag(valueDesiredSpeed);
+   
+    // Force = desiredSpeed - currentSpeed
+    let force = p5.Vector.sub(desiredSpeed, this.vel);
     force.limit(this.maxForce);
     return force;
   }
@@ -92,6 +97,7 @@ class Vehicle {
   }
 
   show() {
+    
     stroke(255);
     strokeWeight(2);
     fill(255);
@@ -99,9 +105,21 @@ class Vehicle {
     strokeWeight(2);
     push();
     translate(this.pos.x, this.pos.y);
-    rotate(this.vel.heading());
+    if(this.vel.mag() > 0)
+      rotate(this.vel.heading());
+
     triangle(-this.r, -this.r / 2, -this.r, this.r / 2, this.r, 0);
     pop();
+    /*
+   push();
+   // on dessine le vehicule comme un cercle
+   fill("blue");
+   stroke("white");
+   strokeWeight(2);
+   translate(this.pos.x, this.pos.y);
+   circle(0, 0, this.r * 2);  
+   pop();
+   */
   }
 
   edges() {
