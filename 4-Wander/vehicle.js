@@ -22,6 +22,8 @@ class Vehicle {
 
     // trainée derrière les véhicules
     this.path = [];
+    this.pathLength = 10;
+    this.pathSpacingInFrames = 5;
     this.pathColor = "white";
   }
 
@@ -222,21 +224,29 @@ class Vehicle {
     this.acc.set(0, 0);
 
     // on rajoute la position courante dans le tableau du chemin
-    this.path.push(this.pos.copy());
-
+    // On ne va pas mémoriser toutes les positions mais
+    // seulement une tous les x frames pour ne pas avoir
+    // trop de points. Par ailleurs, on limitera la taille maximale
+    // du chemin à this.pathLength
+    if (frameCount % this.pathSpacingInFrames === 0) {
+      this.path.push(this.pos.copy());
+    }
     // si le tableau a plus de this.pathLength éléments, on vire le plus ancien
-    // TODO
-
+    if (this.path.length > this.pathLength) {
+      // On supprime les premiers points mémorisés
+      // dans le tableau (pop supprime le dernier, shift le premier)
+      this.path.shift();
+    }
   }
 
   show() {
-    // dessin du chemin
+    // dessin du chemin avec un dégradé couleur arc-en-ciel
     this.path.forEach((p, index) => {
-      if (!(index % 10)) {
+        let inter = map(index, this.path.length, 0, 0, 1);
+        this.pathColor = lerpColor(color("red"), color("blue"), inter);
         stroke(this.pathColor);
         fill(this.pathColor);
-        circle(p.x, p.y, 1);
-      }
+        circle(p.x, p.y, 3);
     });
 
     // dessin du vaisseau

@@ -54,6 +54,7 @@ function draw() {
 function newPath() {
   // Simple suite de points partant de 30, 30 et allant vers 30, height - 30 etc.
   path = new Path();
+  /*
   let offset = 100;
   path.addPoint(offset, offset);
   path.addPoint(300, 180);
@@ -61,7 +62,28 @@ function newPath() {
   path.addPoint(width - offset, height - offset);
   path.addPoint(width / 2, height - offset * 3);
   path.addPoint(200,550);
-  path.addPoint(offset, height - offset);
+  path.addPoint(offset, height - offset);*/
+
+  // genere un circuit qui ressemble à une piste de course
+  // de voiture, sans angles trop durs
+  // Je voudrais une trentaine de segments
+  // Pas dangles trop aigus
+  // et un peu d'aléatoire pour ne pas générer toujours le même circuit
+  let offset = 100;
+  let nbSegments = 30;
+  let angleStep = (TWO_PI / nbSegments);
+  let radiusMin = min(width, height) / 3;
+  let radiusMax = min(width, height) / 2.5;
+
+  for (let i = 0; i < nbSegments; i++) {
+    let angle = i * angleStep;
+    // un peu d'aléatoire sur le rayon
+    let radius = random(radiusMin, radiusMax);
+    let x = width / 2 + cos(angle) * radius;
+    let y = height / 2 + sin(angle) * radius;
+    path.addPoint(x, y);
+  }
+  
 }
 
 function newVehicle(x, y) {

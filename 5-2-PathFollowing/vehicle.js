@@ -49,7 +49,7 @@ class Vehicle {
     let target = findProjection(path.start, future, path.end);
 
     // on le dessine en vert
-    fill(0, 255, 0);
+    fill("green");
     noStroke();
     circle(target.x, target.y, 16);
 
