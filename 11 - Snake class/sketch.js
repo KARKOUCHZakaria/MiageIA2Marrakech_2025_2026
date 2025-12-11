@@ -24,7 +24,7 @@ function setup() {
 
   // le texte
   // Get the point array.
-  points = font.textToPoints('Rabat', 116, 250, 320, { sampleFactor: 0.04 });
+  points = font.textToPoints('ZAKARIA', 116, 250, 320, { sampleFactor: 0.04 });
 
   // autant de véhicules que de points sur le texte  
   nbVehicules = points.length;
