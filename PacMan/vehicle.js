@@ -464,6 +464,60 @@ class Vehicle {
     return steer;
   }
 
+  // Éviter les murs rectangulaires
+  avoidWalls(walls) {
+    let detectionRadius = this.r * 3.5; // larger lookahead to anticipate passages
+    let steer = createVector(0, 0);
+    let count = 0;
+
+    for(let wall of walls) {
+      let distance = wall.distanceToVehicle(this);
+
+      if(distance < detectionRadius) {
+        // point le plus proche
+        let closestX = constrain(this.pos.x, wall.x, wall.x + wall.w);
+        let closestY = constrain(this.pos.y, wall.y, wall.y + wall.h);
+
+        // normal (away from wall) and tangent (along wall)
+        let normal = createVector(this.pos.x - closestX, this.pos.y - closestY);
+        if (normal.mag() === 0) {
+          // pick a sensible normal if exactly on edge
+          let dx = min(abs(this.pos.x - wall.x), abs(this.pos.x - (wall.x + wall.w)));
+          let dy = min(abs(this.pos.y - wall.y), abs(this.pos.y - (wall.y + wall.h)));
+          if (dx < dy) normal = createVector(this.pos.x < (wall.x + wall.w/2) ? -1 : 1, 0);
+          else normal = createVector(0, this.pos.y < (wall.y + wall.h/2) ? -1 : 1);
+        }
+        normal.normalize();
+        let tangent = createVector(-normal.y, normal.x);
+
+        // Strength scales with proximity
+        let strength = map(distance, 0, detectionRadius, this.maxSpeed, 0);
+
+        // Steering away from wall (reduced weight)
+        let away = normal.copy().mult(strength * 0.6);
+
+        // Tangential push to slide along the wall (helps go through passages)
+        // Direction sign is chosen to keep roughly current heading
+        let sign = (this.vel.dot(tangent) >= 0) ? 1 : -1;
+        let along = tangent.copy().mult(strength * 0.7 * sign);
+
+        steer.add(away);
+        steer.add(along);
+        count++;
+      }
+    }
+
+    if(count > 0) {
+      steer.div(count);
+      // convert desired movement into a steering force
+      steer.setMag(this.maxSpeed);
+      steer.sub(this.vel);
+      steer.limit(this.maxForce * 1.4); // allow slightly stronger steering for tight passages
+    }
+
+    return steer;
+  }
+  
   // Éviter les bords du canvas
   avoidBoundaries() {
     const d = 50; // Distance de sécurité avant le bord

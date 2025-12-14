@@ -7,9 +7,72 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
   </head>
   <body>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #1a1a2e;
+      }
+      #menuScreen {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        font-family: 'Arial', sans-serif;
+      }
+      #menuScreen.hidden {
+        display: none;
+      }
+      .menu-title {
+        font-size: 72px;
+        color: #f9ca24;
+        text-shadow: 4px 4px 8px rgba(0,0,0,0.5);
+        margin-bottom: 50px;
+        font-weight: bold;
+      }
+      .menu-option {
+        margin: 20px;
+        padding: 20px 40px;
+        font-size: 24px;
+        background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+        color: white;
+        border: none;
+        border-radius: 15px;
+        cursor: pointer;
+        transition: transform 0.3s, box-shadow 0.3s;
+        box-shadow: 0 4px 15px rgba(108, 92, 231, 0.4);
+      }
+      .menu-option:hover {
+        transform: translateY(-5px) scale(1.05);
+        box-shadow: 0 8px 25px rgba(108, 92, 231, 0.6);
+      }
+      .menu-subtitle {
+        color: #a29bfe;
+        font-size: 20px;
+        margin-top: -30px;
+        margin-bottom: 40px;
+      }
+    </style>
+    <div id="menuScreen">
+      <div class="menu-title">🎮 PAC-MAN 🎮</div>
+      <div class="menu-subtitle">Choose your game mode</div>
+      <button class="menu-option" onclick="startGame(true)">🐾 Play with Pet Mini Pac-Man</button>
+      <button class="menu-option" onclick="startGame(false)">👤 Play Solo</button>
+    </div>
     <script src="wall.js"></script>
-    <script src="obstacle.js"></script>
     <script src="vehicle.js"></script>
+    <script src="missile.js"></script>
     <script src="sketch.js"></script>
   </body>
 </html>
