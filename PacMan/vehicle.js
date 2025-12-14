@@ -76,8 +76,10 @@ class Vehicle {
     ahead2.mult(distanceAhead );
 
     // on le dessine avec ma méthode this.drawVector(pos vecteur, color)
-    this.drawVector(this.pos, ahead, "yellow");
-    this.drawVector(this.pos, ahead2, "blue");
+    if (Vehicle.debug) {
+      this.drawVector(this.pos, ahead, "yellow");
+      this.drawVector(this.pos, ahead2, "blue");
+    }
     // on calcule la distance entre le point au bout du vecteur ahead
     // et le centre de l'obstacle le plus proche
     let pointAuBoutDeAhead = p5.Vector.add(this.pos, ahead);
@@ -85,18 +87,22 @@ class Vehicle {
 
 
     // on dessine le point pour vérifier
-    fill("red");
-   circle(pointAuBoutDeAhead.x, pointAuBoutDeAhead.y, 10);
-    fill("blue");
-    circle(pointAuBoutDeAhead2.x, pointAuBoutDeAhead2.y, 10);
+    if (Vehicle.debug) {
+      fill("red");
+      circle(pointAuBoutDeAhead.x, pointAuBoutDeAhead.y, 10);
+      fill("blue");
+      circle(pointAuBoutDeAhead2.x, pointAuBoutDeAhead2.y, 10);
+    }
     // on calcule la distance entre le point au bout du vecteur ahead
     // et le centre de l'obstacle le plus proche
     let obstacleLePlusProche = this.getClosestObstacle(pointAuBoutDeAhead, obstacles);
     let distance = pointAuBoutDeAhead.dist(obstacleLePlusProche.pos);
     // on dessine la zone d'évitement
-    stroke(100, 100);
-    strokeWeight(this.largeurZoneEvitementDevantVaisseau);
-    line(this.pos.x, this.pos.y, pointAuBoutDeAhead.x, pointAuBoutDeAhead.y);
+    if (Vehicle.debug) {
+      stroke(100, 100);
+      strokeWeight(this.largeurZoneEvitementDevantVaisseau);
+      line(this.pos.x, this.pos.y, pointAuBoutDeAhead.x, pointAuBoutDeAhead.y);
+    }
     if (distance < obstacleLePlusProche.r ) {
       let force = p5.Vector.sub(pointAuBoutDeAhead, obstacleLePlusProche.pos);
       // on le dessine en jaune pour vérifier qu'il est ok (dans le bon sens etc)
@@ -179,7 +185,9 @@ class Vehicle {
         force = p5.Vector.sub(pointAuBoutDeAhead2, obstacleLePlusProche.pos);
       }
       // on le dessine en jaune pour vérifier qu'il est ok (dans le bon sens etc)
-      this.drawVector(obstacleLePlusProche.pos, force, "yellow");
+      if (Vehicle.debug) {
+        this.drawVector(obstacleLePlusProche.pos, force, "yellow");
+      }
 
       // Dessous c'est l'ETAPE 2 : le pilotage (comment on se dirige vers la cible)
       // on limite ce vecteur à la longueur maxSpeed
