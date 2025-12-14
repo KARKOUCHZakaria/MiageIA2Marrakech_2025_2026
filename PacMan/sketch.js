@@ -28,6 +28,7 @@ function preload() {
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
+  frameRate(60); // Assurer 60 FPS
   noLoop(); // On ne lance pas le jeu avant que le menu soit fermé
 }
 
@@ -41,8 +42,8 @@ function startGame(withPet) {
   
   // Créer Pacman dans une zone sûre (centre avec marge)
   pacman = new Vehicle(width/2, height/2);
-  pacman.maxSpeed = 5;
-  pacman.maxForce = 0.3;
+  pacman.maxSpeed = 10;
+  pacman.maxForce = 0.8;
   pacman.r = 15;
   pacman.color = "yellow";
   // S'assurer que Pacman est bien dans les limites
@@ -52,8 +53,8 @@ function startGame(withPet) {
   // Créer Mini Pacman uniquement si l'option est activée
   if(hasPet) {
     miniPacman = new Vehicle(width/2, height/2);
-    miniPacman.maxSpeed = 4;
-    miniPacman.maxForce = 0.25;
+    miniPacman.maxSpeed = 9;
+    miniPacman.maxForce = 0.7;
     miniPacman.r = 10;
     miniPacman.color = "orange";
     // S'assurer que Mini Pacman est bien dans les limites
@@ -232,8 +233,16 @@ function draw() {
     return;
   }
   
-  // Fond sombre avec un léger dégradé
-  background(10, 10, 30);
+  // Fond avec dégradé élégant
+  let c1 = color(15, 15, 40);
+  let c2 = color(25, 15, 50);
+  for(let y = 0; y < height; y++) {
+    let inter = map(y, 0, height, 0, 1);
+    let c = lerpColor(c1, c2, inter);
+    stroke(c);
+    line(0, y, width, y);
+  }
+  noStroke();
   
   // La cible est la position de la souris (pour le comportement arrive)
   let target = createVector(mouseX, mouseY);
@@ -428,18 +437,48 @@ function draw() {
     ghost.pos.x = constrain(ghost.pos.x, ghost.r + 30, width - ghost.r - 30);
     ghost.pos.y = constrain(ghost.pos.y, ghost.r + 30, height - ghost.r - 30);
     
-    // Dessiner le ghost avec sa couleur
+    // Dessiner ombre du ghost
+    push();
+    fill(0, 0, 0, 80);
+    noStroke();
+    ellipse(ghost.pos.x + 2, ghost.pos.y + 3, ghost.r * 2, ghost.r * 1.5);
+    pop();
+    
+    // Dessiner glow autour du ghost
+    push();
+    drawingContext.shadowBlur = 20;
+    drawingContext.shadowColor = ghost.color;
     fill(ghost.color);
     noStroke();
     circle(ghost.pos.x, ghost.pos.y, ghost.r * 2);
+    pop();
     
-    // Dessiner les yeux du ghost
+    // Dessiner le corps du ghost avec surbrillance
+    push();
+    fill(ghost.color);
+    noStroke();
+    circle(ghost.pos.x, ghost.pos.y, ghost.r * 2);
+    // Surbrillance
+    fill(255, 255, 255, 60);
+    circle(ghost.pos.x - 3, ghost.pos.y - 4, ghost.r * 0.8);
+    pop();
+    
+    // Dessiner les yeux du ghost avec plus de détails
+    push();
+    // Blanc des yeux
     fill(255);
-    circle(ghost.pos.x - 5, ghost.pos.y - 3, 6);
-    circle(ghost.pos.x + 5, ghost.pos.y - 3, 6);
-    fill(0);
-    circle(ghost.pos.x - 5, ghost.pos.y - 3, 3);
-    circle(ghost.pos.x + 5, ghost.pos.y - 3, 3);
+    noStroke();
+    circle(ghost.pos.x - 5, ghost.pos.y - 3, 7);
+    circle(ghost.pos.x + 5, ghost.pos.y - 3, 7);
+    // Pupilles
+    fill(0, 0, 150);
+    circle(ghost.pos.x - 5, ghost.pos.y - 3, 4);
+    circle(ghost.pos.x + 5, ghost.pos.y - 3, 4);
+    // Reflets dans les yeux
+    fill(255, 255, 255, 200);
+    circle(ghost.pos.x - 6, ghost.pos.y - 4, 2);
+    circle(ghost.pos.x + 4, ghost.pos.y - 4, 2);
+    pop();
     
     // Afficher la zone de détection (mode debug)
     if(d < ghost.detectionRadius) {
@@ -505,13 +544,35 @@ function draw() {
     
     if(!isBlinking) {
       // Dessiner le fruit avec gradient du vert vers le rouge selon la durée de vie
-      // Plus le fruit est vieux, plus il devient rouge
-      let lifePercent = fruit.lifespan / 420; // Pourcentage de vie restante
-      let r = map(lifePercent, 0, 1, 255, 0); // Rouge augmente quand vie diminue
-      let g = map(lifePercent, 0, 1, 0, 255); // Vert diminue quand vie diminue
+      let lifePercent = fruit.lifespan / 420;
+      let r = map(lifePercent, 0, 1, 255, 0);
+      let g = map(lifePercent, 0, 1, 0, 255);
+      
+      // Ombre du fruit
+      push();
+      fill(0, 0, 0, 60);
+      noStroke();
+      ellipse(fruit.pos.x + 1, fruit.pos.y + 2, 10, 6);
+      pop();
+      
+      // Glow autour du fruit
+      push();
+      drawingContext.shadowBlur = 15;
+      drawingContext.shadowColor = `rgb(${r}, ${g}, 0)`;
       fill(r, g, 0);
       noStroke();
-      circle(fruit.pos.x, fruit.pos.y, 10);
+      circle(fruit.pos.x, fruit.pos.y, 12);
+      pop();
+      
+      // Fruit principal
+      push();
+      fill(r, g, 0);
+      noStroke();
+      circle(fruit.pos.x, fruit.pos.y, 12);
+      // Surbrillance
+      fill(255, 255, 255, 120);
+      circle(fruit.pos.x - 2, fruit.pos.y - 2, 5);
+      pop();
     }
     
     // Vérifier si pacman mange le fruit
@@ -603,22 +664,61 @@ function draw() {
   // ============================================
   // === INTERFACE UTILISATEUR (UI) ===
   // ============================================
-  fill(255);
+  
+  // Panneau UI avec fond semi-transparent
+  push();
+  fill(0, 0, 0, 150);
   noStroke();
+  rect(10, 10, 280, hasPet ? 120 : 90, 10);
+  pop();
+  
+  // Score avec effet lumineux
+  push();
   textSize(24);
   textAlign(LEFT);
-  text("Score: " + score, 20, 40);
-  text("Fruits: " + fruitScore + "/5", 20, 70);
+  fill(255, 215, 0);
+  textStyle(BOLD);
+  text("⭐ Score: " + score, 25, 40);
+  
+  // Fruits avec barre de progression
+  fill(100, 255, 100);
+  text("🍎 Fruits: " + fruitScore + "/5", 25, 70);
+  
+  // Barre de progression pour fruits
+  push();
+  stroke(100, 255, 100);
+  strokeWeight(2);
+  noFill();
+  rect(160, 55, 100, 15, 8);
+  fill(100, 255, 100, 180);
+  noStroke();
+  let progressWidth = map(fruitScore, 0, 5, 0, 96);
+  rect(162, 57, progressWidth, 11, 6);
+  pop();
+  
   if(hasPet) {
     fill(255, 165, 0);
-    text("🐾 Pet Mode", 20, 100);
+    textStyle(NORMAL);
+    text("🐾 Pet Mode", 25, 100);
   }
-  
+  pop();
   // Afficher l'état du missile s'il est disponible
   if(hasMissile) {
+    let yPos = hasPet ? 140 : 110;
+    
+    // Boîte pour le missile
+    push();
+    let pulse = sin(frameCount * 0.1) * 10 + 10;
+    fill(255, 255, 0, 150 + pulse);
+    noStroke();
+    rect(10, yPos - 25, 280, 40, 10);
+    
+    // Texte du missile avec effet pulsation
     fill(255, 255, 0);
-    let yPos = hasPet ? 130 : 100;
-    text("MISSILE READY! Click to fire!", 20, yPos);
+    textStyle(BOLD);
+    textSize(20);
+    text("🚀 MISSILE READY! Click to fire!", 20, yPos);
+    pop();
     
     // Dessiner une cible sur le ghost le plus proche
     if(ghosts.length > 0) {
@@ -634,14 +734,35 @@ function draw() {
         }
       }
       
-      // Dessiner un réticule de visée sur le ghost cible
+      // Dessiner un réticule de visée animé sur le ghost cible
+      push();
+      translate(closest.pos.x, closest.pos.y);
+      rotate(frameCount * 0.02);
+      
+      // Cercles extérieurs avec pulsation
+      let pulse = sin(frameCount * 0.15) * 5;
       noFill();
+      stroke(255, 255, 0, 180);
+      strokeWeight(3);
+      circle(0, 0, closest.r * 3 + pulse);
+      
+      stroke(255, 200, 0, 120);
+      strokeWeight(2);
+      circle(0, 0, closest.r * 4 + pulse * 1.5);
+      
+      // Croix du réticule
       stroke(255, 255, 0);
       strokeWeight(3);
-      circle(closest.pos.x, closest.pos.y, closest.r * 3);
-      // Croix du réticule
-      line(closest.pos.x - 20, closest.pos.y, closest.pos.x + 20, closest.pos.y);
-      line(closest.pos.x, closest.pos.y - 20, closest.pos.x, closest.pos.y + 20);
+      line(-22, 0, -8, 0);
+      line(8, 0, 22, 0);
+      line(0, -22, 0, -8);
+      line(0, 8, 0, 22);
+      
+      // Point central
+      fill(255, 0, 0);
+      noStroke();
+      circle(0, 0, 4);
+      pop();
     }
   }
   
@@ -738,8 +859,8 @@ function restartGame() {
   
   // Recréer Pacman dans une zone sûre
   pacman = new Vehicle(width/2, height/2);
-  pacman.maxSpeed = 5;
-  pacman.maxForce = 0.3;
+  pacman.maxSpeed = 10;
+  pacman.maxForce = 0.8;
   pacman.r = 15;
   pacman.color = "yellow";
   pacman.pos.x = constrain(pacman.pos.x, 80, width - 80);
@@ -748,8 +869,8 @@ function restartGame() {
   // Recréer Mini Pacman uniquement si mode pet activé
   if(hasPet) {
     miniPacman = new Vehicle(width/2, height/2);
-    miniPacman.maxSpeed = 4;
-    miniPacman.maxForce = 0.25;
+    miniPacman.maxSpeed = 9;
+    miniPacman.maxForce = 0.7;
     miniPacman.r = 10;
     miniPacman.color = "orange";
     miniPacman.pos.x = constrain(miniPacman.pos.x, 80, width - 80);
@@ -769,8 +890,8 @@ function restartGame() {
       ghost.pos.x = random(100, width - 100);
       ghost.pos.y = random(100, height - 100);
     }
-    ghost.maxSpeed = 3;
-    ghost.maxForce = 0.2;
+    ghost.maxSpeed = 6.5;
+    ghost.maxForce = 0.5;
     ghost.r = 15;
     ghost.color = colors[i];
     ghost.detectionRadius = 150;
